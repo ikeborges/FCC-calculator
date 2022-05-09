@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+:root {
+  font-size: 16px;
+  --numkey-normal: #323232;
+  --numkey-highligted: #ff9500;
+  --numkey-dimmed: #a6a6a6;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e2e2e2;
+  height: 100vh;
+}
+
+.calculator {
+  padding: 1.5rem;
+
+  background-color: #111;
+  border-radius: 0.5rem;
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.display {
+  font-size: 3rem;
+  font-weight: lighter;
+  text-align: right;
+  margin-top: 3rem;
+  min-height: 100px;
+}
+
+.numpad {
+  display: grid;
+  grid-template-rows: repeat(5, 5rem);
+  grid-template-columns: repeat(4, 5rem);
+  gap: 1rem;
+}
+
+.numkey.colspan-2 {
+  grid-column: span 2;
+  border-radius: 2.5rem;
+  justify-content: flex-start;
+  padding-left: 1.75rem;
+}
+
+.numkey {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--numkey-normal);
+  color: white;
+  cursor: pointer;
+  font-size: 3rem;
+  border-radius: 50%;
+}
+
+.numkey:hover {
+}
+
+.numkey--highlighted {
+  background-color: var(--numkey-highligted);
+}
+
+.numkey--dimmed {
+  background-color: var(--numkey-dimmed);
+  color: black;
+  font-size: 2rem;
+}
