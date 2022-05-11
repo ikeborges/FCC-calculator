@@ -1,22 +1,35 @@
 import { useState } from 'react'
 import './App.css'
 
-type Operation = 'add' | 'subtract' | 'multiply' | 'divide'
+enum Operations {
+  ADD = '+',
+  SUBTRACT = '-',
+  MULTIPLY = '*',
+  DIVIDE = '/',
+}
 
 function App() {
+  const [accumulated, setAccumulated] = useState('')
   const [expression, setExpression] = useState('')
   const [display, setDisplay] = useState('0')
 
   const clearClickHandler = () => {
-    console.log('clear')
+    setExpression('')
+    setDisplay('0')
   }
 
-  const operationClickHandler = (operation: Operation) => {
-    console.log(operation)
+  const operationClickHandler = (operation: Operations) => {
+    if (accumulated.length > 0) {
+      setExpression(accumulated.concat(operation))
+    } else {
+      setExpression((e) => e.concat(operation))
+    }
+    setDisplay(operation)
   }
 
   const numberClickHandler = (numStr: string) => {
-    console.log(numStr)
+    setDisplay(numStr)
+    setExpression((e) => e.concat(numStr))
   }
 
   const decimalClickHandler = () => {
@@ -24,7 +37,11 @@ function App() {
   }
 
   const equalsClickHandler = () => {
-    console.log('equals')
+    const result = '123'
+
+    setDisplay(result)
+    setExpression((e) => e.concat('=', result))
+    setAccumulated(result)
   }
 
   return (
@@ -42,7 +59,7 @@ function App() {
           AC
         </button>
         <button
-          onClick={() => operationClickHandler('divide')}
+          onClick={() => operationClickHandler(Operations.DIVIDE)}
           id="divide"
           className="numkey numkey--highlighted"
         >
@@ -71,7 +88,7 @@ function App() {
           9
         </button>
         <button
-          onClick={() => operationClickHandler('multiply')}
+          onClick={() => operationClickHandler(Operations.MULTIPLY)}
           id="multiply"
           className="numkey numkey--highlighted"
         >
@@ -100,7 +117,7 @@ function App() {
           6
         </button>
         <button
-          onClick={() => operationClickHandler('subtract')}
+          onClick={() => operationClickHandler(Operations.SUBTRACT)}
           id="subtract"
           className="numkey numkey--highlighted"
         >
@@ -129,7 +146,7 @@ function App() {
           3
         </button>
         <button
-          onClick={() => operationClickHandler('add')}
+          onClick={() => operationClickHandler(Operations.ADD)}
           id="add"
           className="numkey numkey--highlighted"
         >
