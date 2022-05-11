@@ -11,6 +11,7 @@ enum Operations {
 function App() {
   const operatorRegex = /[\+\-\/\*]/
   const [expression, setExpression] = useState('')
+  const [newResult, setNewResult] = useState('')
   const [display, setDisplay] = useState('0')
 
   const clearClickHandler = () => {
@@ -19,6 +20,13 @@ function App() {
   }
 
   const operationClickHandler = (operation: Operations) => {
+    if (newResult !== '') {
+      setExpression(newResult.concat(operation))
+      setDisplay(operation)
+      setNewResult('')
+      return
+    }
+
     if (expression.at(-1) === operation) return
 
     if (
@@ -27,8 +35,7 @@ function App() {
     ) {
       if (expression.at(-2)?.match(operatorRegex) && expression.at(-1) === '-')
         setExpression((e) => e.slice(0, e.length - 2) + operation)
-
-      setExpression((e) => e.slice(0, e.length - 1) + operation)
+      else setExpression((e) => e.slice(0, e.length - 1) + operation)
     } else {
       setExpression((e) => e.concat(operation))
     }
@@ -37,8 +44,8 @@ function App() {
 
   const numberClickHandler = (numStr: string) => {
     setDisplay((d) => {
-      if (d.includes('.')) return d.concat(numStr)
-      return numStr
+      if (d === '0' || d.match(operatorRegex)) return numStr
+      return d.concat(numStr)
     })
     setExpression((e) => e.concat(numStr))
   }
@@ -53,25 +60,51 @@ function App() {
 
     setExpression((e) => {
       if (e === '') return '0.'
-      if (!e.includes('.')) return e.concat('.')
+      if (!display.includes('.')) return e.concat('.')
       return e
     })
   }
 
   const equalsClickHandler = () => {
-    const result = String(compute(expression))
+    const tokens = getTokensFromExpression(expression)
+    const result = String(computeResult(tokens))
 
     if (expression.includes('=')) return
 
     setDisplay(result)
-    // setExpression((e) => e.concat('=', result))
+    setExpression((e) => e.concat('=', result))
+    setNewResult(result)
   }
 
-  const compute = (expression: string): number => {
-    const tokens = getTokensFromExpression(expression)
-    console.log(tokens)
+  const computeResult = (tokens: string[]): number => {
+    let accumulator = Number(tokens[0])
+    let current, operation
 
-    return 123
+    let i = 1
+    while (i < tokens.length - 1) {
+      operation = tokens[i]
+      current = Number(tokens[i + 1])
+      accumulator = computeOperation(accumulator, current, operation)
+
+      i += 2
+    }
+
+    return accumulator
+  }
+
+  const computeOperation = (a: number, b: number, operation: string) => {
+    switch (operation) {
+      case Operations.ADD:
+        return a + b
+      case Operations.SUBTRACT:
+        return a - b
+      case Operations.MULTIPLY:
+        return a * b
+      case Operations.DIVIDE:
+        return Number((a / b).toFixed(6))
+      default:
+        throw new Error('Unknown operation')
+    }
   }
 
   const getTokensFromExpression = (expression: string): string[] => {
