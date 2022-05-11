@@ -35,16 +35,20 @@ body {
   align-items: center;
 }
 
-.display {
+.display--container {
   width: 100%;
   font-size: 3rem;
   font-weight: lighter;
   text-align: right;
-  margin-top: 3rem;
+  margin-top: 2rem;
   min-height: 100px;
   overflow-wrap: break-word;
   word-break: break-all;
   padding-bottom: 1rem;
+}
+
+#expression {
+  font-size: 1rem;
 }
 
 .numpad {
@@ -61,6 +65,13 @@ body {
   padding-left: 1.75rem;
 }
 
+.numkey.colspan-3 {
+  grid-column: span 3;
+  border-radius: 2.5rem;
+  justify-content: flex-start;
+  padding-left: 1.75rem;
+}
+
 .numkey {
   display: flex;
   align-items: center;
@@ -70,9 +81,6 @@ body {
   cursor: pointer;
   font-size: 3rem;
   border-radius: 50%;
-}
-
-.numkey:hover {
 }
 
 .numkey--highlighted {
