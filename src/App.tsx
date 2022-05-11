@@ -9,7 +9,7 @@ enum Operations {
 }
 
 function App() {
-  const [accumulated, setAccumulated] = useState('')
+  const operatorRegex = /[\+\-\/\*]/
   const [expression, setExpression] = useState('')
   const [display, setDisplay] = useState('0')
 
@@ -19,8 +19,16 @@ function App() {
   }
 
   const operationClickHandler = (operation: Operations) => {
-    if (accumulated.length > 0) {
-      setExpression(accumulated.concat(operation))
+    if (expression.at(-1) === operation) return
+
+    if (
+      operation !== Operations.SUBTRACT &&
+      expression.at(-1)?.match(operatorRegex)
+    ) {
+      if (expression.at(-2)?.match(operatorRegex) && expression.at(-1) === '-')
+        setExpression((e) => e.slice(0, e.length - 2) + operation)
+
+      setExpression((e) => e.slice(0, e.length - 1) + operation)
     } else {
       setExpression((e) => e.concat(operation))
     }
@@ -28,20 +36,83 @@ function App() {
   }
 
   const numberClickHandler = (numStr: string) => {
-    setDisplay(numStr)
+    setDisplay((d) => {
+      if (d.includes('.')) return d.concat(numStr)
+      return numStr
+    })
     setExpression((e) => e.concat(numStr))
   }
 
   const decimalClickHandler = () => {
-    console.log('decimal')
+    // const textToConcat
+
+    setDisplay((d) => {
+      if (!d.includes('.')) return d.concat('.')
+      return d
+    })
+
+    setExpression((e) => {
+      if (e === '') return '0.'
+      if (!e.includes('.')) return e.concat('.')
+      return e
+    })
   }
 
   const equalsClickHandler = () => {
-    const result = '123'
+    const result = String(compute(expression))
+
+    if (expression.includes('=')) return
 
     setDisplay(result)
-    setExpression((e) => e.concat('=', result))
-    setAccumulated(result)
+    // setExpression((e) => e.concat('=', result))
+  }
+
+  const compute = (expression: string): number => {
+    const tokens = getTokensFromExpression(expression)
+    console.log(tokens)
+
+    return 123
+  }
+
+  const getTokensFromExpression = (expression: string): string[] => {
+    let tokens: string[] = []
+
+    // TODO: Deal with negative numbers (5*8/-2+5)
+    // TODO: Remove double operators
+
+    let currentNumber = ''
+    for (let item of expression) {
+      if (item.match(operatorRegex)) {
+        tokens.push(currentNumber)
+        currentNumber = ''
+        tokens.push(item)
+      } else {
+        currentNumber += item
+      }
+    }
+
+    tokens.push(currentNumber)
+
+    // Remove items from the end that aren't numbers
+    let i = tokens.length - 1
+    while (i >= 0) {
+      const token = Number(tokens[i])
+      if (tokens[i] !== '' && !isNaN(token)) break
+      i--
+    }
+
+    tokens = tokens.slice(0, i + 1)
+
+    // Find negative numbers and attach their signal
+    let foundIndex = tokens.findIndex((token) => token === '')
+    while (foundIndex > 0) {
+      const numberStr = '-' + tokens[foundIndex + 2]
+      tokens.splice(foundIndex, 3, numberStr)
+
+      foundIndex = tokens.findIndex((token) => token === '')
+    }
+
+    return tokens
   }
 
   return (
