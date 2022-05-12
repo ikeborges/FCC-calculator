@@ -15,8 +15,10 @@ function App() {
   const [display, setDisplay] = useState('0')
 
   const clearClickHandler = () => {
-    setExpression('')
-    setDisplay('0')
+    setExpression((e) => {
+      setDisplay('0')
+      return ''
+    })
   }
 
   const operationClickHandler = (operation: Operations) => {
